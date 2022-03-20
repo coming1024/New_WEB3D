@@ -351,13 +351,15 @@
 					//
 					// }
 
-
-					for(let k=0;k<re_tree.points.length;k++){
-						dummy.position.set(re_tree.points[k].x,re_tree.points[k].y,re_tree.points[k].z)
-						dummy.updateMatrix();
-						//
-						mesh.setMatrixAt(i++, dummy.matrix);
+					if(re_tree){
+						for(let k=0;k<re_tree.points.length;k++){
+							dummy.position.set(re_tree.points[k].x,re_tree.points[k].y,re_tree.points[k].z)
+							dummy.updateMatrix();
+							mesh.setMatrixAt(i++, dummy.matrix);
+						}
 					}
+
+
 
 					// for (let k=3;k<=10;k++){
 					// 	let p=0.5*k
