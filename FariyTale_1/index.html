@@ -39,6 +39,7 @@
 
 	<script src="js/ResourceLoader.js"></script>
 	<script src="js/ParamMeasure.js"></script>
+	<script src="js/MySocket.js"></script>
 <!--	<script src="js/lib/Octree.js"></script>-->
 <!--	<script src="js/Main.js"></script>-->
 
@@ -61,7 +62,12 @@
 		myMain.start();
 
 		// myMain.camera.position.set(26.5474101, 9.609053, 10.9);
-		myMain.camera.position.set(0,0,0)
+		//TODO LYZ修改
+		let cameraX = 0;
+		let cameraY = 0;
+		let cameraZ = 0;
+		myMain.camera.position.set(cameraX, cameraY, cameraZ);
+		// myMain.camera.position.set(0,0,0)
 		myMain.camera.rotation.set(0.0793021902702234, 0.8739098399535151,  -0.0608649);
 
 		// console.log(re_tree.points,re_tree.box.max,re_tree.box.min,1111)
@@ -78,6 +84,56 @@
 		// const {Octree} = require("./lib/Octree");
 
 		// import {Octree} from "./lib/Octree";
+
+		const geometry = new THREE.BoxGeometry();
+		const material = new THREE.MeshBasicMaterial({color: 0x122354});
+		var group = new THREE.Group()
+
+		socket.onmessage = function (ev) {
+			group.traverse(function (obj) {
+				console.log(obj.type)
+				if (obj.type === 'Mesh') {
+					console.log('进来了')
+					obj.geometry.dispose();
+					obj.material.dispose();
+					group.remove(obj);
+				}
+			})
+			myMain.scene.remove(group);
+			group.clear();
+			var arr = JSON.parse(ev.data)
+
+			for (let i = 0; i < arr.length; i++) {
+				const cube = new THREE.Mesh(geometry, material);
+				console.log(myMain.camera.position.x)
+				console.log("方块：" + arr[i].x)
+				if (myMain.camera.position.x !== arr[i].x &&
+						myMain.camera.position.y !== arr[i].y &&
+						myMain.camera.position.z !== arr[i].z) {
+
+					group.add(cube);
+					cube.position.setZ(arr[i].z);
+					cube.position.setY(arr[i].y);
+					cube.position.setX(arr[i].x);
+				}
+			}
+			// console.log("添加")
+			myMain.scene.add(group);
+		}
+		;
+		socket.onopen = function (ev) {
+			console.log("连接开启onopen");
+			const data = {
+				x: cameraX,
+				y: cameraY,
+				z: cameraZ
+			}
+			socket.send(JSON.stringify(data))
+		};
+		socket.onclose = function (ev) {
+			console.log("连接关闭onclose");
+		};
+		//LYZ修改
 
 		function Main(){
 			//console.log(2);
@@ -515,8 +571,8 @@
 
 				var spots=[];
 				for(var i=0;i<2;i++)
-					for(j=0;j<2;j++)
-						for(k=0;k<2;k++)
+					for(var j=0;j<2;j++)
+						for(var k=0;k<2;k++)
 							spots.push(
 									getSpot(
 											this.frustum.planes[i],
@@ -695,7 +751,12 @@
 				else if(event.key==="e"||event.key==="E")         scope.dposition.up=0;
 				else if(event.key==="ArrowLeft"||event.key==="a") scope.dposition.left=0;
 				else if(event.key==="ArrowRight"||event.key==="d")scope.dposition.left=0;
-
+				let data = {
+					x:camera.position.x,
+					y:camera.position.y,
+					z:camera.position.z
+				}
+				socket.send(JSON.stringify(data))
 			}
 			myKeyboardManager.init();
 
