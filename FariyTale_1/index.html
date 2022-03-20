@@ -49,7 +49,7 @@
 		import {Octree} from "./js/lib/Octree.js";
 		import {Vector3} from "./js/lib/three.module.js";
 
-		const sight_distance=100
+		const sight_distance=20
 
 		const MyOctree = new Octree(sight_distance)
 		let re_tree
@@ -207,7 +207,7 @@
 				document.body.appendChild( this.renderer.domElement );
 
 				// CAMERAS
-				 this.camera.position.set(-155,41,22,-2.07);//-155,41,22,-2.07,-1.49,-2.07
+				 this.camera.position.set(0,5,0);//-155,41,22,-2.07,-1.49,-2.07
 				//this.camera.position.set(0,0,0)
 				this.camera.rotation.set(-1.5572,-1.47875,-1.55714);//
 
@@ -407,13 +407,15 @@
 					//
 					// }
 
-
-					for(let k=0;k<re_tree.points.length;k++){
-						dummy.position.set(re_tree.points[k].x,re_tree.points[k].y,re_tree.points[k].z)
-						dummy.updateMatrix();
-						//
-						mesh.setMatrixAt(i++, dummy.matrix);
+					if(re_tree){
+						for(let k=0;k<re_tree.points.length;k++){
+							dummy.position.set(re_tree.points[k].x,re_tree.points[k].y,re_tree.points[k].z)
+							dummy.updateMatrix();
+							mesh.setMatrixAt(i++, dummy.matrix);
+						}
 					}
+
+
 
 					// for (let k=3;k<=10;k++){
 					// 	let p=0.5*k
