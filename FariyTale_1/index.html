@@ -88,39 +88,44 @@
 		const geometry = new THREE.BoxGeometry();
 		const material = new THREE.MeshBasicMaterial({color: 0x122354});
 		var group = new THREE.Group()
+		var timeController=(new Date()).valueOf()
 
 		socket.onmessage = function (ev) {
-			group.traverse(function (obj) {
-				console.log(obj.type)
-				if (obj.type === 'Mesh') {
-					console.log('进来了')
-					obj.geometry.dispose();
-					obj.material.dispose();
-					group.remove(obj);
-				}
-			})
-			myMain.scene.remove(group);
-			group.clear();
-			var arr = JSON.parse(ev.data)
+				if((new Date()).valueOf()-timeController>10){
+				group.traverse(function (obj) {
+					console.log(obj.type)
+					if (obj.type === 'Mesh') {
+						console.log('进来了')
+						obj.geometry.dispose();
+						obj.material.dispose();
+						group.remove(obj);
+					}
+				})
+				myMain.scene.remove(group);
+				group.clear();
+				var arr = JSON.parse(ev.data)
 
-			for (let i = 0; i < arr.length; i++) {
-				const cube = new THREE.Mesh(geometry, material);
-				console.log(myMain.camera.position.x)
-				console.log("方块：" + arr[i].x)
-				if (myMain.camera.position.x !== arr[i].x &&
-						myMain.camera.position.y !== arr[i].y &&
-						myMain.camera.position.z !== arr[i].z) {
+				for (let i = 0; i < arr.length; i++) {
+					const cube = new THREE.Mesh(geometry, material);
+					console.log(myMain.camera.position.x)
+					console.log("方块：" + arr[i].x)
+					if (myMain.camera.position.x !== arr[i].x &&
+							myMain.camera.position.y !== arr[i].y &&
+							myMain.camera.position.z !== arr[i].z) {
 
-					group.add(cube);
-					cube.position.setZ(arr[i].z);
-					cube.position.setY(arr[i].y);
-					cube.position.setX(arr[i].x);
+						group.add(cube);
+						cube.position.setZ(arr[i].z);
+						cube.position.setY(arr[i].y);
+						cube.position.setX(arr[i].x);
+					}
 				}
-			}
-			// console.log("添加")
-			myMain.scene.add(group);
+				// console.log("添加")
+				myMain.scene.add(group);
+				timeController=(new Date()).valueOf()
 		}
-		;
+
+		}
+
 		socket.onopen = function (ev) {
 			console.log("连接开启onopen");
 			const data = {
