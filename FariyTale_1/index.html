@@ -742,6 +742,12 @@
 					console.log(","+s);
 					scope.autoPath.push(s);
 				}else if(event.key==="V")alert(scope.autoPath);
+				let data = {
+					x:camera.position.x,
+					y:camera.position.y,
+					z:camera.position.z
+				}
+				socket.send(JSON.stringify(data))
 
 			}
 			myKeyboardManager.onKeyUp=function(event){
@@ -751,12 +757,7 @@
 				else if(event.key==="e"||event.key==="E")         scope.dposition.up=0;
 				else if(event.key==="ArrowLeft"||event.key==="a") scope.dposition.left=0;
 				else if(event.key==="ArrowRight"||event.key==="d")scope.dposition.left=0;
-				let data = {
-					x:camera.position.x,
-					y:camera.position.y,
-					z:camera.position.z
-				}
-				socket.send(JSON.stringify(data))
+
 			}
 			myKeyboardManager.init();
 
