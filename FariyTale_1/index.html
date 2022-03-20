@@ -42,6 +42,7 @@
 <script src="js/ResourceLoader.js"></script>
 <script src="js/ParamMeasure.js"></script>
 <script src="js/MySocket.js"></script>
+<!--<script src="js/lib/GLTFLoader.js" type="module"></script>-->
 <!--	<script src="js/lib/Octree.js"></script>-->
 <!--	<script src="js/Main.js"></script>-->
 
@@ -50,6 +51,7 @@
 
     import {Octree} from "./js/lib/Octree.js";
     import {Vector3} from "./js/lib/three.module.js";
+    import {GLTFLoader} from "./js/lib/GLTFLoader.js";
 
     const sight_distance = 20
 
@@ -109,12 +111,43 @@
                     console.log(arr.length)
                     const cube = new THREE.Mesh(geometry, material);
                     if (arr[i].id !== singleId) {
-                        console.log("arr的循环")
-                        group.add(cube);
 
-                        cube.position.setZ(arr[i].z);
-                        cube.position.setY(arr[i].y);
-                        cube.position.setX(arr[i].x);
+                        console.log("arr的循环")
+
+                        new GLTFLoader().load("./models/gltf/model.glb", function (glb) {//me
+                            glb.scene.traverse(node => {
+                                if (node.frustumCulled) node.frustumCulled = false;
+                            });
+                            glb.scene.rotateY(Math.PI);
+                            glb.scene.scale.set(1,1,1);//0.5,0.5,0.5
+                            //
+                            glb.scene.position.setZ(arr[i].z);
+                            glb.scene.position.setY(arr[i].y);
+                            glb.scene.position.setX(arr[i].x);
+                            //glb.scene.position.set(3, -3,-5);//（0.2, -1.3, 0.1）为m4a1最佳放置位置//0.1,0.1,0.05
+                            glb.scene.name = "m4a1";
+                            // camera.position.set(10,10,10);
+                            group.add(glb.scene);//相机与人物
+                            // if(flag===1){glb.scene.visible=true;}
+                            // if(flag===0){glb.scene.visible=false;}
+                            // camera.lookAt(0,0,0);
+                            //walk
+                            // console.log(glb.animations)
+                            // const meshMixer = new THREE.AnimationMixer(firstSightModel.scene);
+                            // meshMixer.clipAction(firstSightModel.animations[0]).play();
+                            // meshMixer.clipAction(firstSightModel.animations[1]).play();
+                            // meshMixer.clipAction(firstSightModel.animations[2]).play();
+                            // itvWalk = setInterval(function () {
+                            //     meshMixer.clipAction(firstSightModel.animations[3]).play();
+                            //     meshMixer.update(0.01);//更新动作
+                            // }, 10);
+                        });
+
+                        // group.add(cube);
+                        //
+                        // cube.position.setZ(arr[i].z);
+                        // cube.position.setY(arr[i].y);
+                        // cube.position.setX(arr[i].x);
                     }
                 }
 
