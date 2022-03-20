@@ -32,7 +32,7 @@
 
 <script src="js/VideoManager.js"></script>
 
-<script src="js/sceneSet/RoomManager.js"></script>
+<!--<script src="js/sceneSet/RoomManager.js"></script>-->
 <script src="js/sceneSet/SeatManager.js"></script>
 <script src="js/sceneSet/AvatarManager.js"></script>
 
@@ -58,8 +58,8 @@
 
     let myMain = new Main();
 
-    var myRoomManager = new RoomManager(null, myMain.camera);
-    myMain.scene.add(myRoomManager.room);
+    // var myRoomManager = new RoomManager(null, myMain.camera);
+    // myMain.scene.add(myRoomManager.room);
 
     myMain.start();
 
@@ -89,43 +89,35 @@
 
     const geometry = new THREE.BoxGeometry();
     const material = new THREE.MeshBasicMaterial({color: 0x122354});
-    var group = new THREE.Group()
-    var timeController = (new Date()).valueOf()
-    var singleId
+    let group = new THREE.Group()
+    let timeController = (new Date()).valueOf()
+    let singleId
     socket.onmessage = function (ev) {
 
-        var temp = JSON.parse(ev.data)
-        console.log("这是第一次：",temp)
+        let temp = JSON.parse(ev.data)
+        console.log("这是后端传来的数据",temp)
         if(typeof temp ==="string"){
             singleId = temp;
         }else{
             if ((new Date()).valueOf() - timeController > 10) {
-                group.traverse(function (obj) {
-                    console.log(obj.type)
-                    if (obj.type === 'Mesh') {
-                        console.log('进来了')
-                        obj.geometry.dispose();
-                        obj.material.dispose();
-                        group.remove(obj);
-                    }
-                })
+                console.log("group:"+group)
                 myMain.scene.remove(group);
                 group.clear();
-                var arr = JSON.parse(ev.data)
+                let arr = JSON.parse(ev.data)
 
                 for (let i = 0; i < arr.length; i++) {
+                    console.log(arr.length)
                     const cube = new THREE.Mesh(geometry, material);
-                    console.log(myMain.camera.position.x)
-                    console.log("方块：" + arr[i].x)
                     if (arr[i].id !== singleId) {
-
+                        console.log("arr的循环")
                         group.add(cube);
+
                         cube.position.setZ(arr[i].z);
                         cube.position.setY(arr[i].y);
                         cube.position.setX(arr[i].x);
                     }
                 }
-                // console.log("添加")
+
                 myMain.scene.add(group);
                 timeController = (new Date()).valueOf()
             }
@@ -482,7 +474,7 @@
                 if (scope.old_position === undefined) {
                     scope.old_position = Object.assign({}, scope.controller.camera.position)
                 } else if (scope.old_position.x !== scope.controller.camera.position.x && scope.old_position.y !== scope.controller.camera.position.y && scope.old_position.z !== scope.controller.camera.position.z) {
-                    console.log(camera.position.x, camera.position.y, camera.position.z)
+                    // console.log(camera.position.x, camera.position.y, camera.position.z)
                     re_tree = MyOctree.get_point_tree(camera.position)
                     scope.old_position = Object.assign({}, scope.controller.camera.position)
                 }
