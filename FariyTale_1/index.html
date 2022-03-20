@@ -385,17 +385,24 @@
 			this.controller=new PlayerControl0(camera);
 			//console.log(camera.position)
 			this.frustum;
+			this.old_position=undefined
 			this.init=function () {
 				var scope=this;
 				this.controller.KeyboardMoveStep=1;
 				function tool(){
 					requestAnimationFrame(tool);
 					scope.controller.update();
-					console.log(camera.position.x,camera.position.y,camera.position.z)
-					//
-					re_tree=MyOctree.get_point_tree(camera.position)
-					//callback();
 
+					if(scope.old_position===undefined)
+					{
+						scope.old_position=Object.assign({},scope.controller.camera.position)
+					}
+					else if(scope.old_position.x!==scope.controller.camera.position.x&&scope.old_position.y!==scope.controller.camera.position.y&&scope.old_position.z!==scope.controller.camera.position.z){
+						console.log(camera.position.x,camera.position.y,camera.position.z)
+						re_tree=MyOctree.get_point_tree(camera.position)
+						scope.old_position=Object.assign({},scope.controller.camera.position)
+					}
+					//callback();
 					// console.log(camera.position.x,camera.position.y,camera.position.z)
 					//return camera.position;//能否每帧刷新时更新最新的camera坐标并把其传给resourceloarder中的camera position
 					//能否将camera的变化同步到dom中不断更新，当resourceloader需要用的时候再获取此时的camera position
