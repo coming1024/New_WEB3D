@@ -114,7 +114,7 @@
 
                         console.log("arr的循环")
 
-                        new GLTFLoader().load("./models/gltf/model.glb", function (glb) {//me
+                        new GLTFLoader().load("./myModel/model.glb", function (glb) {//me
                             glb.scene.traverse(node => {
                                 if (node.frustumCulled) node.frustumCulled = false;
                             });
